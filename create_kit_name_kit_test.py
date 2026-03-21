@@ -21,6 +21,7 @@ def positive_assert(name):
     response = se.post_new_kit(auth_token,kit_body)
     assert response.status_code == 201
     assert response.json()["name"] == name
+    
 def negative_assert(name=None):
     if name is None:
         kit_body = get_kit_body_empty()
@@ -35,6 +36,7 @@ def negative_assert(name=None):
 #Pruebas
 def test_numero_permitido_de_caracteres():
     positive_assert("a")
+
 def test_numero_permitido_de_caracteres_511():
     positive_assert("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopq")
 
@@ -55,6 +57,7 @@ def test_se_permiten_numeros():
 
 def test_el_parametro_no_se_pasa_en_la_solicitud():
     negative_assert()
+
 def test_se_pasa_un_tipo_de_parametro_diferente():
     negative_assert(123)
 
