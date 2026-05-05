@@ -1,7 +1,7 @@
 import requests
 
 import configuration
-import test_data
+import test_data as td
 
 
 BASE_URL = configuration.URL_SERVICE
@@ -16,7 +16,7 @@ def create_new_user(body, headers):
 
 
 def post_new_kit(auth_token, kit_body):
-    headers = data.user_headers.copy()
+    headers = td.USER_HEADERS.copy()
     headers["Authorization"] = f"Bearer {auth_token}"
 
     return requests.post(

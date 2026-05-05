@@ -7,8 +7,8 @@ import test_data as td
 @pytest.fixture(scope="module")
 def auth_token():
     response = api_client.create_new_user(
-        td.kit_body,
-        td.user_headers
+        td.VALID_USER_BODY,
+        td.USER_HEADERS
     )
 
     assert response.status_code == 201, f"Error creando usuario: {response.text}"
@@ -20,18 +20,17 @@ def auth_token():
     return json_response["authToken"]
 
 
-def get_kit_body(name):
-    kit_body = data.kit_body.copy()
-    kit_body["name"] = name
-    return kit_body
-
-
 def assert_positive_response(auth_token, name):
-    kit_body = get_kit_body(name)
+    kit_body = td.get_kit_body(name)
+
     response = api_client.post_new_kit(auth_token, kit_body)
 
     assert response.status_code == 201
-    assert response.json()["name"] == name
+
+    response_data = response.json()
+
+    assert "name" in response_data
+    assert response_data["name"] == name
 
 
 def assert_negative_response(auth_token, kit_body):
@@ -57,40 +56,11 @@ def test_create_kit_with_valid_name(auth_token, name):
 @pytest.mark.parametrize(
     "kit_body",
     [
-        get_kit_body(""),
-        get_kit_body("a" * 512),
+        td.get_kit_body(""),
+        td.get_kit_body("a" * 512),
         {},
-        get_kit_body(123),
+        td.get_kit_body(123),
     ]
 )
 def test_create_kit_with_invalid_name(auth_token, kit_body):
     assert_negative_response(auth_token, kit_body)
-
-#Pruebas
-def test_numero_permitido_de_caracteres():
-    positive_assert("a")
-
-def test_numero_permitido_de_caracteres_511():
-    positive_assert("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopq")
-
-def test_numero_menor_de_caracteres():
-    negative_assert("")
-
-def test_numero_mayor_permitido_de_caracteres_512():
-    negative_assert("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr")
-
-def test_se_permiten_caracteres_especiales():
-    positive_assert("№%@\",")
-
-def test_se_permiten_espacios():
-    positive_assert("A Aaa")
-
-def test_se_permiten_numeros():
-    positive_assert("123")
-
-def test_el_parametro_no_se_pasa_en_la_solicitud():
-    negative_assert()
-
-def test_se_pasa_un_tipo_de_parametro_diferente():
-    negative_assert(123)
-
