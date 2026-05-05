@@ -34,10 +34,11 @@ Se prueban escenarios relacionados con el campo `name`, incluyendo:
 ## Estructura del proyecto
 
 ```txt
-.
+
 ├── configuration.py
-├── data.py
-├── sender_stand_request.py
-├── create_kit_name_kit_test.py
+├── api_client.py
+├── test_data.py
+├── test_kit_name_validation.py
 ├── README.md
+├── requirements.txt
 └── .gitignore
