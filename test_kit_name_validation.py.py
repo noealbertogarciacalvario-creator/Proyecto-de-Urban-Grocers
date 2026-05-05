@@ -1,37 +1,66 @@
-import data as da
-import api_client as se
-import requests as re
-import configuration as conf
+import pytest
 
-#Funciones para pruebas
+import api_client
+import data
 
-auth_token = se.create_new_user(da.kit_body, da.user_headers).json()["authToken"]
 
-def get_kit_body_empty():
-    kit_body = da.kit_body_empty.copy()
-    return kit_body
+@pytest.fixture(scope="module")
+def auth_token():
+    user_response = api_client.create_new_user(
+        data.kit_body,
+        data.user_headers
+    )
+
+    assert user_response.status_code == 201
+
+    return user_response.json()["authToken"]
+
 
 def get_kit_body(name):
-    kit_body = da.kit_body.copy()
+    kit_body = data.kit_body.copy()
     kit_body["name"] = name
     return kit_body
 
-def positive_assert(name):
+
+def assert_positive_response(auth_token, name):
     kit_body = get_kit_body(name)
-    response = se.post_new_kit(auth_token,kit_body)
+    response = api_client.post_new_kit(auth_token, kit_body)
+
     assert response.status_code == 201
     assert response.json()["name"] == name
 
-def negative_assert(name=None):
-    if name is None:
-        kit_body = get_kit_body_empty()
-        response = se.post_new_kit(auth_token,kit_body)
-        assert response.status_code == 400
-    else:
-        kit_body = get_kit_body(name)
-        response = se.post_new_kit(auth_token,kit_body)
-        assert response.status_code == 400
 
+def assert_negative_response(auth_token, kit_body):
+    response = api_client.post_new_kit(auth_token, kit_body)
+
+    assert response.status_code == 400
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "a",
+        "a" * 511,
+        "№%@\",",
+        "A Aaa",
+        "123",
+    ]
+)
+def test_create_kit_with_valid_name(auth_token, name):
+    assert_positive_response(auth_token, name)
+
+
+@pytest.mark.parametrize(
+    "kit_body",
+    [
+        get_kit_body(""),
+        get_kit_body("a" * 512),
+        {},
+        get_kit_body(123),
+    ]
+)
+def test_create_kit_with_invalid_name(auth_token, kit_body):
+    assert_negative_response(auth_token, kit_body)
 
 #Pruebas
 def test_numero_permitido_de_caracteres():
