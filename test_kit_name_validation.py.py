@@ -1,5 +1,5 @@
 import data as da
-import sender_stand_request as se
+import api_client as se
 import requests as re
 import configuration as conf
 
