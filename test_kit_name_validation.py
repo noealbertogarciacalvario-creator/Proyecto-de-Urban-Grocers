@@ -1,19 +1,23 @@
 import pytest
 
 import api_client
-import data
+import test_data
 
 
 @pytest.fixture(scope="module")
 def auth_token():
-    user_response = api_client.create_new_user(
+    response = api_client.create_new_user(
         data.kit_body,
         data.user_headers
     )
 
-    assert user_response.status_code == 201
+    assert response.status_code == 201, f"Error creando usuario: {response.text}"
 
-    return user_response.json()["authToken"]
+    json_response = response.json()
+
+    assert "authToken" in json_response, "No se recibió authToken en la respuesta"
+
+    return json_response["authToken"]
 
 
 def get_kit_body(name):
