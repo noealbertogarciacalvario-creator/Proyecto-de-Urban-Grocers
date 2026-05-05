@@ -1,14 +1,14 @@
 import pytest
 
 import api_client
-import test_data
+import test_data as td
 
 
 @pytest.fixture(scope="module")
 def auth_token():
     response = api_client.create_new_user(
-        data.kit_body,
-        data.user_headers
+        td.kit_body,
+        td.user_headers
     )
 
     assert response.status_code == 201, f"Error creando usuario: {response.text}"
