@@ -1,13 +1,25 @@
-import requests as re
-import configuration as conf
-import copy as c
-import data as da
+import requests
+
+import configuration
+import data
 
 
+def create_new_user(user_body, headers):
+    """Crea un nuevo usuario y devuelve la respuesta de la API."""
+    return requests.post(
+        configuration.URL_SERVICE + configuration.CREATE_USER_PATH,
+        json=user_body,
+        headers=headers
+    )
 
-def create_new_user(body, header):
-    return re.post(conf.URL_SERVICE + conf.CREATE_USER_PATH, json=body, headers=header)
-def post_new_kit(auth_token,kit_body):
-    headers = da.user_headers.copy()
+
+def post_new_kit(auth_token, kit_body):
+    """Crea un nuevo kit usando el token de autorización del usuario."""
+    headers = data.user_headers.copy()
     headers["Authorization"] = f"Bearer {auth_token}"
-    return re.post(conf.URL_SERVICE + conf.KITS_PATH, json=kit_body, headers=headers)
+
+    return requests.post(
+        configuration.URL_SERVICE + configuration.KITS_PATH,
+        json=kit_body,
+        headers=headers
+    )
